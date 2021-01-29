@@ -141,6 +141,8 @@ public:
   //! Optimization related parameters
   struct Optimization
   {
+  
+    int max_total_cost;
     int no_inner_iterations; //!< Number of solver iterations called in each outerloop iteration
     int no_outer_iterations; //!< Each outerloop iteration automatically resizes the trajectory and invokes the internal optimizer with no_inner_iterations
 

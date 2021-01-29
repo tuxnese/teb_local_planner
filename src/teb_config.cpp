@@ -109,6 +109,7 @@ void TebConfig::loadRosParamFromNodeHandle(const ros::NodeHandle& nh)
   nh.param("obstacle_proximity_upper_bound", obstacles.obstacle_proximity_upper_bound, obstacles.obstacle_proximity_upper_bound);
   
   // Optimization
+  nh.param("max_total_cost", optim.max_total_cost, optim.max_total_cost);
   nh.param("no_inner_iterations", optim.no_inner_iterations, optim.no_inner_iterations);
   nh.param("no_outer_iterations", optim.no_outer_iterations, optim.no_outer_iterations);
   nh.param("optimization_activate", optim.optimization_activate, optim.optimization_activate);
@@ -230,6 +231,7 @@ void TebConfig::reconfigure(TebLocalPlannerReconfigureConfig& cfg)
   obstacles.obstacle_proximity_upper_bound = cfg.obstacle_proximity_upper_bound;
   
   // Optimization
+  optim.max_total_cost = cfg.max_total_cost;
   optim.no_inner_iterations = cfg.no_inner_iterations;
   optim.no_outer_iterations = cfg.no_outer_iterations;
   optim.optimization_activate = cfg.optimization_activate;

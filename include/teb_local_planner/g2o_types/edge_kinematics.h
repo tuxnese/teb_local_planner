@@ -179,7 +179,7 @@ public:
  *          the user might add an extra margin to the min_turning_radius param.
  * @remarks Do not forget to call setTebConfig()
  */    
-class EdgeKinematicsCarlike : public BaseTebBinaryEdge<2, double, VertexPose, VertexPose>
+class EdgeKinematicsCarlike : public BaseTebBinaryEdge<3, double, VertexPose, VertexPose>
 {
 public:
   
@@ -214,6 +214,11 @@ public:
     else
       _error[1] = penaltyBoundFromBelow(deltaS.norm() / fabs(angle_diff), cfg_->robot.min_turning_radius, 0.0); 
     // This edge is not affected by the epsilon parameter, the user might add an exra margin to the min_turning_radius parameter.
+    
+    // positive-drive-direction constraint
+    Eigen::Vector2d angle_vec ( cos(conf1->theta()), sin(conf1->theta()) );	   
+    _error[2] = penaltyBoundFromBelow(deltaS.dot(angle_vec), 0,0);
+    // epsilon=0, otherwise it pushes the first bandpoints away from start
     
     ROS_ASSERT_MSG(std::isfinite(_error[0]) && std::isfinite(_error[1]), "EdgeKinematicsCarlike::computeError() _error[0]=%f _error[1]=%f\n",_error[0],_error[1]);
   }

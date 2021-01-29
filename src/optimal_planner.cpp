@@ -227,8 +227,18 @@ bool TebOptimalPlanner::optimizeTEB(int iterations_innerloop, int iterations_out
     
     weight_multiplier *= cfg_->optim.weight_adapt_factor;
   }
-
-  return true;
+  
+  computeCurrentCost(obst_cost_scale, viapoint_cost_scale, alternative_time_cost);
+  if ( cost_ < cfg_->optim.max_total_cost) {
+    clearGraph();
+    return true;
+  }
+  else{
+    ROS_WARN("The optimized cost is too high: %f", cost_);
+    computeCurrentCost(obst_cost_scale, viapoint_cost_scale, alternative_time_cost);
+    clearGraph();
+    return false;
+  }
 }
 
 void TebOptimalPlanner::setVelocityStart(const geometry_msgs::Twist& vel_start)
@@ -935,10 +945,11 @@ void TebOptimalPlanner::AddEdgesKinematicsCarlike()
     return; // if weight equals zero skip adding edges!
 
   // create edge for satisfiying kinematic constraints
-  Eigen::Matrix<double,2,2> information_kinematics;
+  Eigen::Matrix<double,3,3> information_kinematics;
   information_kinematics.fill(0.0);
   information_kinematics(0, 0) = cfg_->optim.weight_kinematics_nh;
   information_kinematics(1, 1) = cfg_->optim.weight_kinematics_turning_radius;
+  information_kinematics(2, 2) = cfg_->optim.weight_kinematics_forward_drive;
   
   for (int i=0; i < teb_.sizePoses()-1; i++) // ignore twiced start only
   {
